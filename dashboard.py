@@ -20,7 +20,7 @@ st.subheader("KPIs")
 st.write(f"Total Sales: ${df['sales'].sum():,.2f}")
 st.write(f"Total Orders: {df['transactionid'].nunique()}")
 st.write(f"Average Order Value: ${df.groupby('transactionid' )['sales'].sum().mean():.2f}")
-st.write(f"Revenue by Category: {df.groupby('productcategory')['sales'].sum().to_dict()}")
+
 
 
 st.subheader("revenue Metrics")
@@ -42,4 +42,27 @@ customers_start = df[df['transactiondate'] < '2026-01-01']['customerid'].unique(
 customers_end = df[df['transactiondate'] >= '2026-01-01']['customerid'].unique()
 retention_rate = (len(np.intersect1d(customers_start, customers_end)) / len(customers_start)) * 100
 st.metric(label="Customer Retention Rate", value=f"{retention_rate:.2f}%")
+
+
+st.header('Charts')
+
+st.subheader("Sales by Product Category")
+sales_by_category = df.groupby('productcategory')['sales'].sum().sort_values(ascending=False)
+st.bar_chart(sales_by_category)
+
+st.subheader("Sales Over Time")
+sales_over_time = df.groupby('transactiondate')['sales'].sum()
+st.line_chart(sales_over_time)
+
+st.subheader("Top 10 Products by Sales")
+top_products = df.groupby('productid')['sales'].sum().sort_values(ascending=False).head(10)
+st.bar_chart(top_products)
+
+st.subheader("Customer Demographics")
+age_distribution = df['customerage'].dropna()
+st.bar_chart(age_distribution.value_counts().sort_index())
+
+st.subheader("Sales by Region")
+sales_by_region = df.groupby('customerregion')['sales'].sum().sort_values(ascending=False)
+st.bar_chart(sales_by_region)
 
